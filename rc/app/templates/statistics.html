@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+ 	<title>RC Web Demo</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="stylesheet" href="static/assets/vendors/mdi/css/materialdesignicons.min.css">
+	<link rel="stylesheet" href="static/assets/vendors/css/vendor.bundle.base.css">
+	<link rel="stylesheet" href="static/assets/vendors/jvectormap/jquery-jvectormap.css">
+	<link rel="stylesheet" href="static/assets/css/style.css">
+	<link rel="icon" href="static/me/images/logo-static.png">
+</head>
+
+<body>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+
+	<div class="container-scroller">
+		<nav class="sidebar sidebar-offcanvas" id="sidebar">
+			<div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
+				<a class="sidebar-brand brand-logo" href="" style="color:white;">
+					<h3>REPL CUSTOMS</h3>
+				</a>
+			</div>
+			<ul class="nav">
+			<li class="nav-item nav-category"><span class="nav-link">Navigation</span></li>
+			<li class="nav-item menu-items">
+				<a class="nav-link" href="/index">
+				<span class="menu-icon"><i class="mdi mdi-home-variant"></i></span>
+				<span class="menu-title">Home</span>
+				</a>
+			</li>
+
+			<li class="nav-item menu-items">
+				<a class="nav-link" href="/statistics">
+				<span class="menu-icon"><i class="mdi mdi-chart-bar"></i></span>
+				<span class="menu-title">Statistics</span>
+				</a>
+			</li>
+
+			<li class="nav-item menu-items">
+				<a class="nav-link" href="/leaderboard">
+				<span class="menu-icon"><i class="mdi mdi-speedometer"></i></span>
+				<span class="menu-title">Leaderboard</span>
+				</a>
+			</li>
+
+			<li class="nav-item menu-items">
+				<a class="nav-link" href="/users">
+				<span class="menu-icon"><i class="mdi mdi-contacts"></i></span>
+				<span class="menu-title">Users</span>
+				</a>
+			</li>
+			<li class="nav-item menu-items">
+				<a class="nav-link" href="/posts">
+				<span class="menu-icon"><i class="mdi mdi-file-document-box"></i></span>
+				<span class="menu-title">Posts</span>
+				</a>
+			</li>
+			<li class="nav-item menu-items">
+				<a class="nav-link" href="/info">
+				<span class="menu-icon"><i class="mdi mdi-information"></i></span>
+				<span class="menu-title">Information</span>
+				</a>
+			</li>
+			</ul>
+		</nav>
+
+		<div class="container-fluid page-body-wrapper">
+			<nav class="navbar p-0 fixed-top d-flex flex-row">
+				<div class="navbar-menu-wrapper flex-grow d-flex align-items-stretch">
+				<button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+					<span class="mdi mdi-menu"></span>
+				</button>
+				<ul class="navbar-nav w-100">
+					<li class="nav-item w-100">
+					<form class="nav-link mt-2 mt-md-0 d-none d-lg-flex search">
+					<input type="text" class="form-control" placeholder="Search Databse">
+					</form>
+					</li>
+				</ul>
+				</div>
+			</nav>
+			<div class="main-panel">
+				<div class="content-wrapper">
+					<div class="page-header">
+						<h1 class="page-title" style="font-size:32px;">ReplTalk Statistics</h1>
+						<br>
+						<p>Last Data Refresh: <b>{{ext.genTimeObj(datetime(2020, 7, 13))["full-date.text"]}}</b></p>
+					</div>
+				<div class="row">
+            		<div class="col-md-12 grid-margin stretch-card">
+             		<div class="card">
+                		<div class="card-body">
+                  			<canvas id="cycle-chart"></canvas>
+                		</div>
+						<div class="card-description">
+							<h5 style="text-align:center">Data obtained from the top 500 ReplTalk users.</h5>
+						</div>
+              		</div>
+            		</div>
+					<br>
+            		<div class="col-lg-12 grid-margin stretch-card">
+              		<div class="card">
+                		<div class="card-body">
+                 			<canvas id="langs-chart"></canvas>
+                		</div>
+						<div class="card-description">
+							<h5 style="text-align:center">Data obtained from the top 7000 ReplTalk users.</h5>
+						</div>
+              		</div>
+            		</div>
+            	</div>
+
+				<div class="row">
+            		<div class="col-lg-12 grid-margin stretch-card">
+              		<div class="card">
+                		<div class="card-body">
+                 			<canvas id="subs-chart"></canvas>
+                		</div>
+						<div class="card-description">
+							<h5 style="text-align:center">Data obtained from the top 7000 ReplTalk users.</h5>
+						</div>
+              		</div>
+           		</div>
+        	</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+	jQuery.get("/../../static/me/charts/json/cycles-500.json", function (c) {
+		new Chart(document.getElementById("cycle-chart"), {
+			type: 'pie',
+			data: {
+			labels: [">1000 Cycles", ">500 Cycles", ">250 Cycles", ">100 Cycles", "<100 Cycles"],
+			datasets: [{
+				label: "Population (millions)",
+				backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+				borderWidth: 0,
+				data: [
+					c[">1000 Cycles"].size,
+					c[">500 Cycles"].size,
+					c[">250 Cycles"].size,
+					c[">100 Cycles"].size,
+					c["<100 Cycles"].size
+				]}
+			]},
+			options: {
+				title: {
+					display: true,
+					text: 'Cycle Count by Percentage',
+					},
+				segmentShowStroke: false
+			}
+		});
+	});
+	jQuery.get("/../../static/me/charts/json/langs-7000.json", function (l) {
+		new Chart(document.getElementById("langs-chart"), {
+			type: 'pie',
+			data: {
+			labels: [
+				"Python",
+				"Node.js",
+				"C",
+				"C++",
+				"C#",
+				"Java",
+				"Ruby",
+				"Lua",
+				"HTML, CSS, JS",
+				"Go",
+				"Rust",
+				"Haskell",
+				"Python 2.7",
+				"Swift",
+				"Bash",
+				"Julia",
+				"Elixir",
+				"SQLite",
+				"JavaScript",
+				"PHP Web Server",
+				"Pygame",
+				"Love2D",
+				"Tkinter",
+			],
+			datasets: [{
+				label: "Languages",
+				borderWidth: 0,
+				backgroundColor: [
+					"#ff0000", 
+					"#bf34ab",
+					"#f7a046",
+					"#5e939b",
+					"#9d37bf",
+					"#66b104", 
+					"#57ae70",
+					"#3ffe93",
+					"#371460",
+					"#48b935",
+					"#d22c8a", 
+					"#c6a9a6",
+					"#a39b4e",
+					"#a83269",
+					"#30f38b",
+					"#79636e", 
+					"#f4ec41",
+					"#40ec2b",
+					"#e90b8d",
+					"#10b006",
+					"#015431", 
+					"#470881",
+					"#22bf54",
+				],
+				data: [
+					l.languages["Python"]["total"],
+					l.languages["Node.js"]["total"],
+					l.languages["C"]["total"],
+					l.languages["C++"]["total"],
+					l.languages["C#"]["total"], 
+					l.languages["Java"]["total"], 
+					l.languages["Ruby"]["total"], 
+					l.languages["Lua"]["total"], 
+					l.languages["HTML, CSS, JS"]["total"], 
+					l.languages["Go"]["total"], 
+					l.languages["Rust"]["total"], 
+					l.languages["Haskell"]["total"], 
+					l.languages["Python 2.7"]["total"], 
+					l.languages["Swift"]["total"], 
+					l.languages["Bash"]["total"], 
+					l.languages["Julia"]["total"], 
+					l.languages["Elixir"]["total"], 
+					l.languages["SQLite"]["total"], 
+					l.languages["JavaScript"]["total"], 
+					l.languages["PHP Web Server"]["total"], 
+					l.languages["Pygame"]["total"], 
+					l.languages["Love2D"]["total"], 
+					l.languages["Tkinter"]["total"], 
+				]}
+			]},
+			options: {title: {display: true, text: 'Most Used Languages by Percentage'}}
+		});
+	});
+	jQuery.get("/../../static/me/charts/json/subs-7000.json", function (s) {
+		new Chart(document.getElementById("subs-chart"), {
+			type: 'pie',
+			data: {
+			labels: ["Hacker", "Starter", "Unknown"],
+			datasets: [{
+				label: "Population (millions)",
+				borderWidth: 0,
+				backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f"],
+				data: [s["Hacker"].size, s["Starter"].size, s["Unknown"].size
+				]}
+			]},
+			options: {title: {display: true, text: 'Subscription Type by Percentage'}}
+		});
+	});
+	</script>
+
+	<!--why are there so many external js files lmao -->
+	<script src="static/assets/vendors/js/vendor.bundle.base.js"></script>
+	<script src="static/assets/vendors/chart.js/Chart.min.js"></script>
+	<script src="static/assets/vendors/progressbar.js/progressbar.min.js"></script>
+	<script src="static/assets/vendors/jvectormap/jquery-jvectormap.min.js"></script>
+	<script src="static/assets/vendors/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+	<script src="static/assets/vendors/owl-carousel-2/owl.carousel.min.js"></script>
+	<script src="static/assets/js/off-canvas.js"></script>
+	<script src="static/assets/js/hoverable-collapse.js"></script>
+	<script src="static/assets/js/misc.js"></script>
+	<script src="static/assets/js/settings.js"></script>
+	<script src="static/assets/js/todolist.js"></script>
+	<script src="static/assets/js/dashboard.js"></script>
+</body>
+
+</html>

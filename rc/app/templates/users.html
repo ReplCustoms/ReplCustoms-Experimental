@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>RC Web Demo</title>
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="/../../static/assets/vendors/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="/../../static/assets/vendors/css/vendor.bundle.base.css">
+    <link rel="stylesheet" href="/../../static/assets/vendors/jvectormap/jquery-jvectormap.css">
+    <link rel="stylesheet" href="/../../static/assets/css/style.css">
+    <link rel="icon" href="/../../static/me/images/logo-static.png"/>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+	<div class="container-scroller">
+		<nav class="sidebar sidebar-offcanvas" id="sidebar">
+			<div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
+				<a class="sidebar-brand brand-logo" href="" style="color:white;">
+					<h3>REPL CUSTOMS</h3>
+				</a>
+			</div>
+			<ul class="nav">
+			<li class="nav-item nav-category"><span class="nav-link">Navigation</span></li>
+			<li class="nav-item menu-items">
+				<a class="nav-link" href="/index">
+				<span class="menu-icon"><i class="mdi mdi-home-variant"></i></span>
+				<span class="menu-title">Home</span>
+				</a>
+			</li>
+
+			<li class="nav-item menu-items">
+				<a class="nav-link" href="/statistics">
+				<span class="menu-icon"><i class="mdi mdi-chart-bar"></i></span>
+				<span class="menu-title">Statistics</span>
+				</a>
+			</li>
+
+			<li class="nav-item menu-items">
+				<a class="nav-link" href="/leaderboard">
+				<span class="menu-icon"><i class="mdi mdi-speedometer"></i></span>
+				<span class="menu-title">Leaderboard</span>
+				</a>
+			</li>
+
+			<li class="nav-item menu-items">
+				<a class="nav-link" href="/users">
+				<span class="menu-icon"><i class="mdi mdi-contacts"></i></span>
+				<span class="menu-title">Users</span>
+				</a>
+			</li>
+			<li class="nav-item menu-items">
+				<a class="nav-link" href="/posts">
+				<span class="menu-icon"><i class="mdi mdi-file-document-box"></i></span>
+				<span class="menu-title">Posts</span>
+				</a>
+			</li>
+			<li class="nav-item menu-items">
+				<a class="nav-link" href="/info">
+				<span class="menu-icon"><i class="mdi mdi-information"></i></span>
+				<span class="menu-title">Information</span>
+				</a>
+			</li>
+			</ul>
+		</nav>
+	<div class="container-fluid page-body-wrapper">
+		<nav class="navbar p-0 fixed-top d-flex flex-row">
+			<div class="navbar-menu-wrapper flex-grow d-flex align-items-stretch">
+			<button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+				<span class="mdi mdi-menu"></span>
+			</button>
+			<ul class="navbar-nav w-100">
+				<li class="nav-item w-100">
+				<form class="nav-link mt-2 mt-md-0 d-none d-lg-flex search">
+				<input type="text" class="form-control" placeholder="Search Databse">
+				</form>
+				</li>
+			</ul>
+			</div>
+		</nav>
+		{% if not res %}
+		<div class="main-panel">
+			<div class="content-wrapper">
+			<div class="page-header">
+				<h3 class="page-title" style="font-size:32px;">Users</h3>
+			</div>
+            <div class="row">
+              <div class="col-md-12 grid-margin stretch-card" style="margin: auto; display: block">
+                <div class="card">
+                  	<div class="card-body">
+					<div class="container" style="width:60%">
+						<h3 class="card-title" style="text-align:center;">Find Information on ReplTalk Users Here!</h4>
+						<h1 style="text-align:center;font-size:116px">
+							<i class="mdi mdi-account-multiple"></i>
+						</h1>
+						<p class="card-description">Enter a Username</p>
+						<form action="" method="GET" autocomplete="off">
+						<div class="form-group">
+							<div class="input-group">
+								<div class="input-group-prepend">
+									<span class="input-group-text" style="color:white;">@</span>
+								</div>
+								{{form.q(class="form-control")}}
+								<div class="input-group-append">
+									{{form.s(class="btn btn-primary")}}
+								</div>
+							</div>
+						</div>
+						</form>
+						<h6 class="display-6" id="ff" style="display:none">Usernames are case-insensitve!</h6>
+						<script>jQuery("#q").focus(function(){jQuery("#ff").css( "display", "inline").fadeOut(3000);});</script>
+					</div>
+                  	</div>
+                </div>
+            </div>
+		</div>
+		</div>
+		{% else %}
+		<div class="main-panel">
+			<div class="content-wrapper">
+				<div class="page-header">
+					<h3>Profile Page</h3>
+					<a href="//repl.it/@{{user.name}}" target="_blank" rel="noopener" class="btn btn-yellow">
+					Visit on ReplTalk
+					</a>
+				</div>
+				<div class="row">
+				<div class="col-lg-12 grid-margin stretch-card">
+					<div class="container">
+					<div class="card">
+						<div class="card-header">
+							<img src="{{user.avatar}}" width="128" height="128" alt="PFP"
+							style="border-radius: 50%; display: block; margin: auto;">
+							<h3 class="page-title" style="font-size:32px;text-align:center;">{{user.name}}</h3>
+							<br>
+							<p style="color:black; text-align: center">
+								{%for inx, r in ext.enumerate(ext.getUserRoles(user))%}
+								<span class="badge badge-{{ext.statuses[inx%ext.len(ext.statuses)]}}">{{r}}</span>&nbsp;{%endfor%}
+							</p>
+						<div class="card-body">
+							<div class="table-responsive">
+								<table class="table">
+								<thead>
+									<tr>
+										<th> Cycles </th>
+										<th> Subscription </th>
+										<th> Date Joined</th>
+										<th> Favorite Languages </th>
+										<th> Organization </th>
+									</tr>
+								</thead>
+								<tbody style="color:white;">
+									<tr>
+										<th> {{user.cycles}} </th>
+										<th> {{ext.getUserSubs(user)}} </th>
+										<th> {{ ext.genTimeObj(user.timestamp)["full-date.text"] }} </th>
+										<th>{% if user.languages %}{% set langs = user.languages %}
+											{% if langs[0] %}<img src="{{ langs[0].icon }}" width="64" height="64">{{langs[0].display_name}}{% endif %}
+											{% if langs[1] %}<img src="{{ langs[1].icon }}" width="64" height="64">{{langs[1].display_name}}{% endif %}
+											{% if langs[2] %}<img src="{{ langs[2].icon }}" width="64" height="64">{{langs[2].display_name}}{% endif %}
+											{% else %} None {% endif %}
+										</th>
+										<!--<th> {%set r=ext.getUserRoles(user)%}{% if r %}{{r}}{%else%}None{%endif%}</th>-->
+										<th> {{user.organization.name if user.organization else None}} </th>
+									</tr>
+								</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					</div>
+					<br>
+					<!---------------------------------------------------->
+					<div class="row">
+					<div class="col-lg-12 grid-margin stretch-card">
+						<div class="card">
+						<div class="container" style="margin-top:1%;margin-bottom:1%">
+							<div class="card-title">
+								<h3 style="text-align:center;">Biography:</h3>
+							</div>
+							<div class="card-description">
+								<p style="text-align:center;">
+									{{ user.bio }}
+								</p>
+							</div>
+						</div>
+						</div>
+					</div>
+					</div>
+					<!---------------------------------------------------->
+					<div class="row">
+					<div class="col-md-6 col-xl-6 grid-margin stretch-card">
+						<div class="card">
+						<div class="card-body">
+							<div class="d-flex flex-row justify-content-between">
+							<h4 class="card-title">Recent Posts</h4>
+							<a class="text-muted mb-1 small" target="_blank" href="//repl.it/@{{user.name}}?tab=posts">View all</a>
+							</div>
+							<div class="preview-list">
+							{% set posts = ext.getUserPosts(user, limit=5, order='new') %}{% if posts %}{% for post in posts[:5] %}
+							<div class="preview-item {% if ext.len(posts) >= 5 %}{% if post == posts[4] %} {% else %}border-bottom{% endif %}{%endif%}">
+								<div class="preview-thumbnail"><img src="{{user.avatar}}" class="rounded-circle"></div>
+								<div class="preview-item-content d-flex flex-grow">
+								<div class="flex-grow">
+									<div class="d-flex d-md-block d-xl-flex justify-content-between">
+									<h6 class="preview-subject">
+										<a href="{{post.url}}">
+											{%if ext.len(post.title)>=30%}{{post.title[:30]}}...{%else%}{{post.title}}{%endif%}
+										</a>
+										<br><i class="mdi mdi-arrow-up-drop-circle"></i>{{post.votes}}
+									</h6>
+									<p class="text-muted text-small">{{ ext.genTimeObj(post.timestamp)["half-date.text"] }}</p>
+									</div>
+									<p class="text-muted">{{ post.content[:150] }}...</p>
+								</div>
+								</div>
+							</div>
+							{% endfor %}{%  else %} An error occured in retreving posts. {% endif %}
+							</div>
+						</div>
+						</div>
+					</div>
+					<!----------------------------------------------------->
+					<div class="col-md-6 col-xl-6 grid-margin stretch-card">
+						<div class="card">
+						<div class="card-body">
+							<div class="d-flex flex-row justify-content-between">
+							<h4 class="card-title">Recent Comments</h4>
+							<a class="text-muted mb-1 small" target="_blank" href="//repl.it/@{{user.name}}?tab=comments">View all</a>
+							</div>
+							<div class="preview-list">
+							{% set comms = ext.getUserComments(user, limit=5, order='new') %}{% if comms %}{% for com in comms[:7] %}
+							{% set tpost = ext.genPost(com.post) %}
+							<div class="preview-item {% if ext.len(comms) >= 5 %}{% if com == comms[6] %}{% else %}border-bottom{% endif %}{% endif %}">
+								<div class="preview-thumbnail"><img src="{{user.avatar}}" class="rounded-circle"></div>
+								<div class="preview-item-content d-flex flex-grow">
+								<div class="flex-grow">
+									<div class="d-flex d-md-block d-xl-flex justify-content-between">
+									<h6 class="preview-subject">
+										Comment From:
+										<a href="{{tpost.url}}">
+										{%if ext.len(tpost.title)>=30 %}{{tpost.title[:30]}}...{%else%}{{tpost.title}}{%endif%}
+										</a>
+									</h6>
+									<p class="text-muted text-small">{{ ext.genTimeObj(com.timestamp)["half-date.text"] }}</p>
+									</div>
+									<p class="text-muted">
+										{%if ext.len(com.content) >= 150%}{{ com.content[:150] }}...{% else %}{{com.content}}{%endif%}
+									</p>
+								</div>
+								</div>
+							</div>
+							{% endfor %}{%  else %} An error occured in retreving comments. {% endif %}
+							</div>
+						</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+				<div class="col-12 grid-margin stretch-card">
+					<div class="card">
+					<div class="container" style="margin-top:20px;">
+						<h3 class="card-title" style="text-align:center"> Technical Information </h3>
+						<p class="card-description" style="text-align:center">
+							Extra information on {{user.name}} brought to you by ReplCustoms!
+							<br><br>
+						</p>
+						{% set pu = ext.genUserPercentile(user) %}{% set su = ext.getUserSpamScore(user) %}
+						<div class="table-responsive">
+						<table class="table">
+							<thead style="font-size: 24px">
+							<tr>
+								<th></th>
+								<th></th>
+							</tr>
+							</thead>
+							<tbody style="color: white">
+							<tr>
+								<th style="text-align: center;"> 
+									<h3> Percentile: <h3>
+									<h1 class="display-1" style="color:{{pu['color']}}"> 
+										{{pu["percentile.decimal"]}}%
+									</h1>
+									<p>
+										{{user.name}} is in the top {{pu["percentile.rounded"]}}% of users! 
+									</p>
+								</th>
+								<th style="text-align: center;"> 
+									<h3> CM Spam Score: <h3>
+									<h1 class="display-1" style="color:{{su['color']}}"> 
+										{{su["score"]}}
+										<img src="/../../static/me/images/icons/{{su['emoji']}}.png"
+										width="128" height="128" style="display: inline;">
+									</h1>
+									<p>
+										{{user.name}} has a Spam Score of {{su["score"]}}.
+									</p>
+								</th>
+							</tr>
+							</tbody>
+						</table>
+						</div>
+					</div>	
+					</div>
+				</div>
+				</div>
+				</div>
+			</div>
+			</div>
+		</div>{% endif %}
+	</div>
+	</div>
+
+	<!--why are there so many external js files lmao -->
+	<script src="/../../static/assets/vendors/js/vendor.bundle.base.js"></script>
+	<script src="/../../static/assets/vendors/chart.js/Chart.min.js"></script>
+	<script src="/../../static/assets/vendors/progressbar.js/progressbar.min.js"></script>
+	<script src="/../../static/assets/vendors/jvectormap/jquery-jvectormap.min.js"></script>
+	<script src="/../../static/assets/vendors/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+	<script src="/../../static/assets/vendors/owl-carousel-2/owl.carousel.min.js"></script>
+	<script src="/../../static/assets/js/off-canvas.js"></script>
+	<script src="/../../static/assets/js/hoverable-collapse.js"></script>
+	<script src="/../../static/assets/js/misc.js"></script>
+	<script src="/../../static/assets/js/settings.js"></script>
+	<script src="/../../static/assets/js/todolist.js"></script>
+	<script src="/../../static/assets/js/dashboard.js"></script>
+</body>
+
+</html>
