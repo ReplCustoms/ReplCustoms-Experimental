@@ -1,0 +1,12 @@
+{% extends "templates/main.html"%}
+{% block content %}
+{% if user_id %}
+	<h1>Hello, {{ user_name }}!</h1>
+	<p>Your user id is {{ user_id }}.</p>
+	{% else %}
+	Hello! Please log in.
+	<div>
+		<script authed="location.reload()" src="https://auth.turbio.repl.co/script.js"></script>
+	</div>
+	{% endif %}
+{% endblock %}

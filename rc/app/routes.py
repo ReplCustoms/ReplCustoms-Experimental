@@ -1,8 +1,10 @@
+import flask
 import extools as ext
 from datetime import datetime
 from app import app, cache
 from app.forms import SearchUser, SearchPost
-from flask import render_template, request, url_for
+from flask import render_template, request, url_for, session
+import flask
 
 @app.route('/')
 @app.route('/home')
@@ -11,18 +13,39 @@ from flask import render_template, request, url_for
 def index():
 	return render_template("index.html")
 
+@app.route('/login')
+def login():
+  return render_template('auth.html',
+		user_id=request.headers['X-Replit-User-Id'],
+		user_name=request.headers['X-Replit-User-Name'],
+		user_roles=request.headers['X-Replit-User-Roles']
+	)
+@app.route('/logout')
+def logut():
+  return render_template('logout.html')
 @app.route('/stats')
 @app.route('/statistics')
 @cache.cached(timeout=60)
 def statistics():
 	return render_template("statistics.html", ext=ext, datetime=datetime)
 
+#@app.route('/goto/lboard')
+#@app.route('/goto/leaderboard')
+
+@app.route('/goto', defaults={'u_path': ''})
+@app.route('/goto/', defaults={'u_path': ''})
+@app.route('/goto/<path:u_path>')
+@cache.cached(timeout=60)
+def goto_lboard(u_path):
+  if(len(u_path.split('.'))>1):
+    return flask.redirect('/'+u_path)
+  return render_template("redir.html",url="/"+u_path)
+
 @app.route('/lboard')
 @app.route('/leaderboard')
 @cache.cached(timeout=60)
-def lboard():
-	return render_template("leaderboard.html", ext=ext)
-
+def lboard_loaded():
+  return render_template("leaderboard.html", ext=ext)
 @app.route('/users', methods=['GET', 'POST'])
 def users():
 	form = SearchUser()
@@ -64,6 +87,9 @@ def posts():
 	else:
 		return render_template("posts.html", ext=ext, form=form, res=False)
 
+@app.route('/error')
+def _error():
+  return render_template("error.html",context="example error")
 @app.route('/posts/results/<query>-<order>')
 def postsQ(query, order):
 	q = str(query).replace('+', '')
@@ -72,6 +98,10 @@ def postsQ(query, order):
 
 	return render_template("posts.html", ext=ext, r=results, q=q, res=True)
 
+@app.route('/info')
+@app.route('/information')
+def info():
+  return render_template("info.html")
 @app.route('/posts/page/<i>')
 def postsP(i):
 	p = ext.genPost(int(i))

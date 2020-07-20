@@ -38,7 +38,7 @@
 			</li>
 
 			<li class="nav-item menu-items">
-				<a class="nav-link" href="/leaderboard">
+				<a class="nav-link" href="/goto/leaderboard">
 				<span class="menu-icon"><i class="mdi mdi-speedometer"></i></span>
 				<span class="menu-title">Leaderboard</span>
 				</a>
@@ -131,7 +131,7 @@
 					<div class="card">
 						<div class="card-header">
 							<img src="{{user.avatar}}" width="128" height="128" alt="PFP"
-							style="border-radius: 50%; display: block; margin: auto;">
+							style="border-radius:50%;display:block;margin:auto;overflow:hidden;">
 							<h3 class="page-title" style="font-size:32px;text-align:center;">{{user.name}}</h3>
 							<br>
 							<p style="color:black; text-align: center">
@@ -140,32 +140,32 @@
 							</p>
 						<div class="card-body">
 							<div class="table-responsive">
-								<table class="table">
-								<thead>
-									<tr>
-										<th> Cycles </th>
-										<th> Subscription </th>
-										<th> Date Joined</th>
-										<th> Favorite Languages </th>
-										<th> Organization </th>
-									</tr>
-								</thead>
-								<tbody style="color:white;">
-									<tr>
-										<th> {{user.cycles}} </th>
-										<th> {{ext.getUserSubs(user)}} </th>
-										<th> {{ ext.genTimeObj(user.timestamp)["full-date.text"] }} </th>
-										<th>{% if user.languages %}{% set langs = user.languages %}
-											{% if langs[0] %}<img src="{{ langs[0].icon }}" width="64" height="64">{{langs[0].display_name}}{% endif %}
-											{% if langs[1] %}<img src="{{ langs[1].icon }}" width="64" height="64">{{langs[1].display_name}}{% endif %}
-											{% if langs[2] %}<img src="{{ langs[2].icon }}" width="64" height="64">{{langs[2].display_name}}{% endif %}
-											{% else %} None {% endif %}
-										</th>
-										<!--<th> {%set r=ext.getUserRoles(user)%}{% if r %}{{r}}{%else%}None{%endif%}</th>-->
-										<th> {{user.organization.name if user.organization else None}} </th>
-									</tr>
-								</tbody>
-								</table>
+							<table class="table">
+							<thead>
+								<tr>
+									<th> Cycles </th>
+									<th> Subscription </th>
+									<th> Date Joined</th>
+									<th> Favorite Languages </th>
+									<th> Organization </th>
+								</tr>
+							</thead>
+							<tbody style="color:white;">
+								<tr>
+									<th> {{user.cycles}} </th>
+									<th> {{ext.getUserSubs(user)}} </th>
+									<th> {{ ext.genTimeObj(user.timestamp)["full-date.text"] }} </th>
+									<th>{% if user.languages %}{% set langs = user.languages %}
+										{% if langs[0] %}<img src="{{ langs[0].icon }}" width="64" height="64">{{langs[0].display_name}}{% endif %}
+										{% if langs[1] %}<img src="{{ langs[1].icon }}" width="64" height="64">{{langs[1].display_name}}{% endif %}
+										{% if langs[2] %}<img src="{{ langs[2].icon }}" width="64" height="64">{{langs[2].display_name}}{% endif %}
+										{% else %} None {% endif %}
+									</th>
+									<!--<th> {%set r=ext.getUserRoles(user)%}{% if r %}{{r}}{%else%}None{%endif%}</th>-->
+									<th> {{user.organization.name if user.organization else None}} </th>
+								</tr>
+							</tbody>
+							</table>
 							</div>
 						</div>
 					</div>
@@ -266,7 +266,7 @@
 							Extra information on {{user.name}} brought to you by ReplCustoms!
 							<br><br>
 						</p>
-						{% set pu = ext.genUserPercentile(user) %}{% set su = ext.getUserSpamScore(user) %}
+						{% set pu = ext.genUserPercentile(user) %}{% set su = ext.getUserSpamPercent(user) %}
 						<div class="table-responsive">
 						<table class="table">
 							<thead style="font-size: 24px">
@@ -282,9 +282,7 @@
 									<h1 class="display-1" style="color:{{pu['color']}}"> 
 										{{pu["percentile.decimal"]}}%
 									</h1>
-									<p>
-										{{user.name}} is in the top {{pu["percentile.rounded"]}}% of users! 
-									</p>
+									<p>{{user.name}} is in the top {{pu["percentile.rounded"]}}% of users!</p>
 								</th>
 								<th style="text-align: center;"> 
 									<h3> CM Spam Score: <h3>
@@ -293,9 +291,7 @@
 										<img src="/../../static/me/images/icons/{{su['emoji']}}.png"
 										width="128" height="128" style="display: inline;">
 									</h1>
-									<p>
-										{{user.name}} has a Spam Score of {{su["score"]}}.
-									</p>
+									<p>{{user.name}} has a Spam Score of {{su["score"]}}.</p>
 								</th>
 							</tr>
 							</tbody>
