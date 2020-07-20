@@ -100,10 +100,14 @@ def getUserPosts(user, limit=30, order='new'):
 		return None
 	return k
 
+
 def getUserRoles(user):
 	roles = []
 	for i in user.roles: roles.append(i['name'])
 	if user.name.lower() in devs: roles.insert(0, 'RC Dev Team')
+	for i in user.roles:
+		roles.append(i['name'])
+
 	return roles
 
 def getUserSpamScore(user):
@@ -172,6 +176,41 @@ def getUserSpamPercent(user):
 		"emoji" : icon
 	}
 	
+def getUserSpamPercent(user):
+	q = user.name
+	r = requests.get(f'http://bad-boi-api.codemonkey51.repl.co/api/percent/{q}')
+	score = r.text[:-1]
+	print(score)
+	found = True
+
+	if not r.text: return 'User Not Found'
+	else:
+		if r.text[-1:] == '%': score = r.text
+		else: found = False
+
+	if found:
+		try:
+			scoreT = score[:-1].split('-')
+			scoreAverage = (int(scoreT[0])+int(scoreT[1]))/2
+		except IndexError:
+			scoreAverage = int(score[:-1])
+	else:
+		return {
+			"score" : r.text,
+			"color" : "#FF0000",
+			"emoji" : "Terrible"
+		}
+
+	if scoreAverage >= 100: color = '#FF0000'; icon = "Terrible"
+	elif scoreAverage >= 70: color = 'orange'; icon = "Bad"
+	elif scoreAverage >= 40: color = '#CCFF00'; icon = "Sneaky" 
+	else: color = '#90EE90'; icon = "Amazing"
+	
+	return {
+		"score" : score,
+		"color" : color,
+		"emoji" : icon
+	}
 
 def genLeaderboard(cap):
 	async def genBoard(lim):
