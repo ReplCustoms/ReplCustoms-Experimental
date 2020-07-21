@@ -2,12 +2,17 @@
     .sidebar {
         left: 0;
         right: -100vw;
-        width: 35px;
+        width: 45px;
     }
 
     .sidebar .nav-category .nav-link {
         display: none !important;
         position: absolute;
+    }
+
+    .sidebar .nav-item .nav-link {
+        display: flex;
+        justify-content: center;
     }
 
     .sidebar .menu-title {
@@ -16,7 +21,6 @@
     }
 
     .sidebar .menu-icon {
-        width: 100% !important;
         margin: 0 !important;
     }
 
@@ -26,6 +30,7 @@
 
     .sidebar .nav-link {
         padding: 2px !important;
+        border-radius: 0px !important;
     }
 
     .sidebar .nav-item {
@@ -33,7 +38,7 @@
     }
 
     .content-wrapper {
-        padding-left: 42px !important;
+        padding-left: 48px !important;
     }
 
     .navbar #search {
@@ -42,7 +47,6 @@
 
     .navbar #search form {
         display: block !important;
-        padding-right: 10px !important;
         margin-left: 0 !important;
     }
 

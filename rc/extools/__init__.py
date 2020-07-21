@@ -8,15 +8,15 @@ from markdown2 import Markdown
 from markdown import markdown
 from bs4 import BeautifulSoup
 
-
 int = int
 str = str
 float = float
 len = len
 enumerate = enumerate
 
-bbAPI = 'http://bad-boi-api.codemonkey51.repl.co'
 ghAPI = 'https://api.github.com'
+rcAPI = 'http://rcapi.irethekid.repl.co'
+bbAPI = 'http://bad-boi-api.codemonkey51.repl.co'
 
 devs = ['irethekid','codemonkey51','sugarfi']
 statuses = ['primary', 'danger', 'info', 'success', 'warning']
@@ -57,15 +57,20 @@ def genPost(id):
 
 def genPostResults(q, o):
 	async def soo(x, y):
-		global pRes
-		pRes = []
+		global pRes, uRes
+		pRes, uRes = [], []
 		async for post in client.boards.all.get_posts(sort=y, search=x):
+			u = post.author
 			if post not in pRes:
 				pRes.append(post)
+				if u:
+					if u not in uRes:
+						uRes.append(u)
+				else: pass
 			else: pass
 	
 	loop.run_until_complete(soo(q, o))
-	return pRes
+	return pRes, uRes
 
 def getUserSubs(user):
 	s = user.subscription
@@ -100,14 +105,10 @@ def getUserPosts(user, limit=30, order='new'):
 		return None
 	return k
 
-
 def getUserRoles(user):
 	roles = []
 	for i in user.roles: roles.append(i['name'])
 	if user.name.lower() in devs: roles.insert(0, 'RC Dev Team')
-	for i in user.roles:
-		roles.append(i['name'])
-
 	return roles
 
 def getUserSpamScore(user):
@@ -143,11 +144,11 @@ def getUserSpamScore(user):
 def getUserSpamPercent(user):
 	q = user.name
 	r = requests.get(f'{bbAPI}/api/percent/{q}')
+
 	score = r.text[:-1]
-	print(score)
 	found = True
 
-	if not r.text: return 'User Not Found'
+	if not r.text: return 'An Error Has Occured'
 	else:
 		if r.text[-1:] == '%': score = r.text
 		else: found = False
@@ -176,41 +177,6 @@ def getUserSpamPercent(user):
 		"emoji" : icon
 	}
 	
-def getUserSpamPercent(user):
-	q = user.name
-	r = requests.get(f'http://bad-boi-api.codemonkey51.repl.co/api/percent/{q}')
-	score = r.text[:-1]
-	print(score)
-	found = True
-
-	if not r.text: return 'User Not Found'
-	else:
-		if r.text[-1:] == '%': score = r.text
-		else: found = False
-
-	if found:
-		try:
-			scoreT = score[:-1].split('-')
-			scoreAverage = (int(scoreT[0])+int(scoreT[1]))/2
-		except IndexError:
-			scoreAverage = int(score[:-1])
-	else:
-		return {
-			"score" : r.text,
-			"color" : "#FF0000",
-			"emoji" : "Terrible"
-		}
-
-	if scoreAverage >= 100: color = '#FF0000'; icon = "Terrible"
-	elif scoreAverage >= 70: color = 'orange'; icon = "Bad"
-	elif scoreAverage >= 40: color = '#CCFF00'; icon = "Sneaky" 
-	else: color = '#90EE90'; icon = "Amazing"
-	
-	return {
-		"score" : score,
-		"color" : color,
-		"emoji" : icon
-	}
 
 def genLeaderboard(cap):
 	async def genBoard(lim):
@@ -234,38 +200,18 @@ def genLeaderboardPercentage(cap):
 	less100 = []
 
 	for user in lboard:
-		if user.cycles >= 1000:
-			over1000.append(user.name)
-		elif user.cycles >= 500:
-			over500.append(user.name)
-		elif user.cycles >= 250:
-			over250.append(user.name)
-		elif user.cycles >= 100:
-			over100.append(user.name)
-		else:
-			less100.append(user.name)
+		if user.cycles >= 1000: over1000.append(user.name)
+		elif user.cycles >= 500: over500.append(user.name)
+		elif user.cycles >= 250: over250.append(user.name)
+		elif user.cycles >= 100: over100.append(user.name)
+		else: less100.append(user.name)
 
 	return {
-		'>1000 Cycles' : {
-			"size" : len(over1000),
-			"users" : over1000,
-		},
-		'>500 Cycles' : {
-			"size" : len(over500),
-			"users" : over500
-		},
-		'>250 Cycles' : {
-			"size" : len(over250), 
-			"users": over250
-		},
-		'>100 Cycles' : {
-			"size" : len(over100),
-			"users" : over100
-		},
-		'<100 Cycles' : {
-			"size" : len(less100),
-			"users" : less100
-		},
+		'>1000 Cycles' : {"size":len(over1000),"users":over1000,},
+		'>500 Cycles' : {"size":len(over500),"users":over500},
+		'>250 Cycles' : {"size":len(over250),"users":over250},
+		'>100 Cycles' : {"size":len(over100),"users":over100},
+		'<100 Cycles' : {"size":len(less100),"users":less100},
 	}
 
 def genRandomStatus(carp=False):
@@ -279,7 +225,6 @@ def genRandomStatus(carp=False):
 			'danger', 'warning', 'info']
 
 		return random.choice(statuses)
-
 
 def genUserPercentile(user):
 	if user.cycles > 1000:
