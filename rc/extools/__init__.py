@@ -4,9 +4,6 @@ import random
 import asyncio
 import repltalk
 import requests
-from markdown2 import Markdown
-from markdown import markdown
-from bs4 import BeautifulSoup
 
 int = int
 str = str
@@ -21,7 +18,6 @@ bbAPI = 'http://bad-boi-api.codemonkey51.repl.co'
 devs = ['irethekid', 'codemonkey51', 'sugarfi']
 statuses = ['primary', 'danger', 'info', 'success', 'warning']
 
-mdc = Markdown()
 client = repltalk.Client()
 loop = asyncio.get_event_loop()
 
@@ -45,7 +41,7 @@ def genUser(name):
         global user
         user = await client.get_user(x)
 
-    loop.run_until_complete(getUser(x=name))
+    loop.run_until_complete(getUser(x=name.lower()))
     return user
 
 
@@ -293,36 +289,6 @@ def saveChartData(**z):
         return True
     else:
         return False
-
-
-def renderMD(content, internal=False):
-    def _add_a_attrs(soup):
-        for tag in soup.find_all("a"):
-            tag['rel'] = "nofollow"
-            tag['target'] = "_blank"
-
-    def repStrs(target, strs, new):
-        for s in strs:
-            target = target.replace(s, '')
-        return "<html>", target, "</html>"
-
-    soup = BeautifulSoup(
-        markdown(content, extensions=['codehilite']), features="html5lib")
-
-    _add_a_attrs(soup)
-    res = str(soup.prettify())
-
-    if internal == False:
-        return res
-    else:
-        return repStrs(
-            res,
-            ['<html>', '</html>', '<head>', '</head>', '<body>', '</body>'],
-            "")
-
-
-def renderMD2(target):
-    return str(mdc.convert(target))
 
 
 def renderMD3(content):

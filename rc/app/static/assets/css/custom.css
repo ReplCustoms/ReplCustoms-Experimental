@@ -1,3 +1,30 @@
+input {
+    color: white !important;
+}
+
+.page-header {
+    display: flex !important;
+    justify-content: center !important;
+}
+
+a:hover {
+    text-decoration: underline !important;
+}
+
+.sidebar a:hover {
+    text-decoration: none !important;
+}
+
+::selection {
+    color: black;
+    background-color: rgba(255, 255, 255, 0.99);
+}
+
+::-moz-selection {
+    color: black;
+    background-color: white;
+}
+
 @media (max-width: 991px) {
     .sidebar {
         left: 0;
@@ -53,4 +80,20 @@
     .navbar #search form, .navbar #search form input {
         width: 100% !important;
     }
+}
+
+.preview-item {
+    overflow-x: auto;
+}
+
+#img-container {
+    width: 128px;
+    height: 128px;
+    border-radius:50%;
+    display:block;
+    margin:auto;
+    overflow:hidden;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
 }

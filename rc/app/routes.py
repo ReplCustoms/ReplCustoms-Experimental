@@ -1,59 +1,79 @@
-import flask
-import app.login as login
+import secrets
 import extools as ext
 from datetime import datetime
-from app import app, cache
-from app.forms import SearchUser, SearchPost
-from flask import render_template, request, url_for
 
+from app import app, cache, db
+from app.forms import SearchUser, SearchPost
+from app.models import User, check_user, new_user
+db.create_all()
+
+from flask import render_template, request, url_for, redirect
+from flask_login import login_user, current_user, logout_user
 
 @app.route('/')
 @app.route('/home')
 @app.route('/index')
-@cache.cached(timeout=60)
 def index():
-    return render_template("index.html")
+	return render_template("index.html")
 
 
-auth = login.Auth()
-
-
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    return render_template(
-        'auth.html',
-        user_id=request.headers['X-Replit-User-Id'],
-        user_name=request.headers['X-Replit-User-Name'],
-        user_roles=request.headers['X-Replit-User-Roles'],
-        r=request.values.get('r', None),
-        goto=request.values.get('goto', '/'))
+	global auth_token
+	auth_token =secrets.token_hex(16)
+
+	return render_template('login.html',
+		user_id=request.headers['X-Replit-User-Id'],
+		user_name=request.headers['X-Replit-User-Name'],
+		auth_token=auth_token,
+		auth=True
+	)
 
 
-@app.route('/logout')
-def logut():
-    return render_template('logout.html')
+@app.route('/auth/<username>/<int:id>/<aT>')
+def auth_user(username, id, aT):
+	if aT == auth_token:
+		if check_user(username):
+			user = User.query.filter_by(username=username).first()
+			login_user(user, remember=False)
+			return redirect(url_for('index'))
+		else:
+			rtUser = ext.genUser(username)
+			new_user(
+				uid = id,
+				uname = username,
+				upfp = rtUser.avatar,
+				ujd = datetime.now()
+			)
+			return render_template('login.html', newAcc=True)
+	else:
+		return "Repl.it Account has not been authenticated."
 
+
+@app.route("/logout")
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
+
+@app.route('/settings')
+def settings():
+	return render_template("error.html",context='coming soon')
 
 @app.route('/stats')
 @app.route('/statistics')
-@auth.req_login()
 @cache.cached(timeout=60)
 def statistics():
     return render_template("statistics.html", ext=ext, datetime=datetime)
 
 
-#@app.route('/goto/lboard')
-#@app.route('/goto/leaderboard')
-
-
-@app.route('/goto', defaults={'u_path': ''})
-@app.route('/goto/', defaults={'u_path': ''})
-@app.route('/goto/<path:u_path>')
+@app.route('/goto', defaults={'upath': ''})
+@app.route('/goto/', defaults={'upath': ''})
+@app.route('/goto/<path:upath>')
 @cache.cached(timeout=60)
-def goto_lboard(u_path):
-    if len(u_path.split('.')) > 1:
-        return flask.redirect('/' + u_path)
-    return render_template("redir.html", url="/" + u_path)
+def goto_lboard(upath):
+    if len(upath.split('.')) > 1:
+        return redirect('/' + upath)
+    return render_template("redir.html", url="/" + upath)
 
 
 @app.route('/lboard')
